@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hobbes v ICH — Master Chronology</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f1117;
+    --surface: #161820;
+    --surface2: #1c1f2a;
+    --border: #2a2d38;
+    --text: #e8e4dc;
+    --text-dim: #9ca3af;
+    --text-muted: #6b7280;
+    --text-faint: #4a4d5a;
+    --accent-gold: #f5c842;
+    --employment: #60a5fa;
+    --regulatory: #fb923c;
+    --financial: #f87171;
+    --legal: #c084fc;
+    --centrelink: #34d399;
+    --tab-active: #f5c842;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 40px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  .header-row1 {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .case-label {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .case-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #f5f0e8;
+    flex: 1;
+  }
+
+  .expand-hint {
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: 0.06em;
+    font-style: italic;
+    margin-left: auto;
+    padding-bottom: 4px;
+    align-self: flex-end;
+  }
+
+  /* ── TABS ── */
+  .tab-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-top: 4px;
+  }
+  .tab-row::-webkit-scrollbar { display: none; }
+
+  .tab {
+    padding: 8px 14px 10px;
+    border-radius: 6px 6px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    font-size: 11px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--surface);
+    color: var(--text-muted);
+    transition: all 0.18s;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    flex-shrink: 0;
+    position: relative;
+    bottom: -1px;
+  }
+
+  .tab:hover { background: var(--surface2); color: var(--text-dim); }
+
+  .tab.active {
+    background: var(--surface2);
+    color: var(--tab-active);
+    border-color: var(--border);
+    border-bottom: 1px solid var(--surface2);
+    font-weight: 600;
+  }
+
+  .tab .tab-count {
+    display: inline-block;
+    margin-left: 5px;
+    font-size: 9px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0 5px;
+    color: var(--text-faint);
+    font-weight: 500;
+    vertical-align: middle;
+  }
+
+  .tab.active .tab-count {
+    background: rgba(245,200,66,.1);
+    border-color: rgba(245,200,66,.25);
+    color: var(--accent-gold);
+  }
+
+  /* ── TIMELINE ── */
+  .tl-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 36px 40px 80px;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .section-group { margin-bottom: 4px; }
+
+  .section-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-faint);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 20px 0 6px 54px;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+  }
+
+  .section-group:first-child .section-label {
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  .track {
+    position: relative;
+    padding-left: 54px;
+  }
+
+  .track::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  /* ── EVENT ── */
+  .ev {
+    position: relative;
+    margin-bottom: 5px;
+    transition: opacity 0.2s;
+  }
+
+  .dot {
+    position: absolute;
+    left: -35px;
+    top: 13px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 2px solid;
+    background: var(--bg);
+    transition: transform 0.18s;
+  }
+
+  .ev:hover .dot { transform: scale(1.5); }
+
+  .ev.milestone .dot {
+    width: 15px;
+    height: 15px;
+    left: -37px;
+    top: 11px;
+    border-width: 2px;
+  }
+
+  .dot-inner {
+    position: absolute;
+    inset: 2px;
+    border-radius: 50%;
+    transition: opacity 0.18s;
+  }
+
+  .ev[data-c="employment"] .dot { border-color: var(--employment); }
+  .ev[data-c="employment"] .dot-inner { background: var(--employment); }
+  .ev[data-c="regulatory"] .dot { border-color: var(--regulatory); }
+  .ev[data-c="regulatory"] .dot-inner { background: var(--regulatory); }
+  .ev[data-c="financial"] .dot { border-color: var(--financial); }
+  .ev[data-c="financial"] .dot-inner { background: var(--financial); }
+  .ev[data-c="legal"] .dot { border-color: var(--legal); }
+  .ev[data-c="legal"] .dot-inner { background: var(--legal); }
+  .ev[data-c="centrelink"] .dot { border-color: var(--centrelink); }
+  .ev[data-c="centrelink"] .dot-inner { background: var(--centrelink); }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 2px solid;
+    border-radius: 5px;
+    padding: 11px 15px;
+    cursor: pointer;
+    transition: background 0.15s;
+    user-select: none;
+  }
+
+  .card:hover { background: var(--surface2); }
+
+  .ev[data-c="employment"] .card { border-left-color: var(--employment); }
+  .ev[data-c="regulatory"] .card { border-left-color: var(--regulatory); }
+  .ev[data-c="financial"] .card { border-left-color: var(--financial); }
+  .ev[data-c="legal"] .card { border-left-color: var(--legal); }
+  .ev[data-c="centrelink"] .card { border-left-color: var(--centrelink); }
+
+  .ev.milestone .card { border-left-width: 3px; }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 3px;
+    flex-wrap: wrap;
+  }
+
+  .ev-date {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+
+  .pill {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .ev[data-c="employment"] .pill { color: var(--employment); background: rgba(96,165,250,.1); }
+  .ev[data-c="regulatory"] .pill { color: var(--regulatory); background: rgba(251,146,60,.1); }
+  .ev[data-c="financial"] .pill { color: var(--financial); background: rgba(248,113,113,.1); }
+  .ev[data-c="legal"] .pill { color: var(--legal); background: rgba(192,132,252,.1); }
+  .ev[data-c="centrelink"] .pill { color: var(--centrelink); background: rgba(52,211,153,.1); }
+
+  .flag {
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    background: rgba(245,200,66,.1);
+    border: 1px solid rgba(245,200,66,.25);
+    padding: 1px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .ev-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.35;
+  }
+
+  .ev.milestone .ev-title {
+    font-size: 14.5px;
+    color: #f5f0e8;
+  }
+
+  .ev-detail {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    line-height: 1.55;
+    margin-top: 7px;
+    display: none;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+  }
+
+  .card.open .ev-detail { display: block; }
+
+  .ev-source {
+    font-size: 10.5px;
+    color: var(--text-faint);
+    font-style: italic;
+    margin-top: 5px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── SOURCE FILES PANEL ── */
+  .source-files {
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .source-files-title {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .source-file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .source-file-item:last-child { border-bottom: none; }
+  .file-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+  }
+  .file-type {
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+  }
+  .file-type.pdf { background: rgba(248,113,113,.12); color: #f87171; }
+  .file-type.doc { background: rgba(96,165,250,.12); color: #60a5fa; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-row1">
+    <span class="case-label">Case Chronology</span>
+    <span class="case-title">Hobbes v Inala Community House t/as My Place Family Day Care</span>
+    <span class="expand-hint">Click any event to expand detail</span>
+  </div>
+  <div class="tab-row">
+    <button class="tab active" data-tab="pre-suspension">Pre-Suspension<span class="tab-count">2</span></button>
+    <button class="tab" data-tab="post-suspension">Post Suspension<span class="tab-count">6</span></button>
+    <button class="tab" data-tab="agreement-expiry">Agreement Expiry Fair Work &amp; ECRA Decision<span class="tab-count">6</span></button>
+    <button class="tab" data-tab="fairwork-ecra">Fairwork and ECRA Decision<span class="tab-count">1</span></button>
+    <button class="tab" data-tab="foi">FOI<span class="tab-count">3</span></button>
+    <button class="tab" data-tab="financial">Financial Loss &amp; CentreLink<span class="tab-count">4</span></button>
+    <button class="tab" data-tab="legal">Legal Proceedings &amp; Demand<span class="tab-count">7</span></button>
+    <button class="tab" data-tab="counsel">Counsel Prep<span class="tab-count">3</span></button>
+  </div>
+</div>
+
+<div class="tl-wrap">
+
+<!-- ══════════════════════════════════════════════
+     TAB 1: PRE-SUSPENSION
+     Files: Pre-Suspension Notification 21 May 2025
+             Visit Report 19 May 2025 (2 days pre-suspension)
+     ══════════════════════════════════════════════ -->
+<div class="tab-panel active" id="tab-pre-suspension">
+
+  <div class="section-group">
+    <div class="section-label">Background — Commencement &amp; Training</div>
+    <div class="track">
+
+      <div class="ev" data-c="employment">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">20 Jun 2022</span>
+            <span class="pill">Employment</span>
+          </div>
+          <div class="ev-title">Mary Hobbes registers as FDC Educator — My Place FDC (ICH)</div>
+          <div class="ev-detail">
+            Mary commences as a registered Family Day Care Educator with Inala Community House t/as My Place Family Day Care. Holds Certificate III in Early Childhood Education and Care. Blue Card No. 1889223/3 (exp. 21 Jan 2027).
+            <div class="ev-source">Source: ECRA Educator Register Report (FOI File 254829)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="employment">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">18 Jul 2022</span>
+            <span class="pill">Employment</span>
+          </div>
+          <div class="ev-title">Robert Hobbes registers as Educator Assistant</div>
+          <div class="ev-detail">
+            Robert commences as Educational Assistant. Responsible for daily transport of enrolled children. Blue Card No. 1420131/2. Driver's Licence No. 038 716 850 (exp. 27 Sep 2026).
+            <div class="ev-source">Source: ECRA Educator Register Report (FOI File 254829)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev milestone" data-c="employment">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">3 Jun 2024</span>
+            <span class="pill">Employment</span>
+            <span class="flag">Key Document</span>
+          </div>
+          <div class="ev-title">Educator Agreement signed — Mary Hobbes &amp; ICH</div>
+          <div class="ev-detail">
+            Educator Agreement and Schedule executed between Mary Hobbes and Inala Community House t/as My Place Family Day Care. Term: to 30 June 2025. Key clauses: Clause 24 (suspension/investigation power); Clause 13(b) (satisfaction threshold for termination). ICH's exercise of Clause 24 on 21 May 2025 is the primary contractual act under challenge.
+            <div class="ev-source">Source: Educator Agreement and Schedule 2024–2025</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev milestone" data-c="employment">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">5 Jun 2024</span>
+            <span class="pill">Employment</span>
+            <span class="flag">Key Document</span>
+          </div>
+          <div class="ev-title">Educational Assistant Agreement signed — Robert Hobbes &amp; ICH</div>
+          <div class="ev-detail">
+            Parallel agreement executed for Robert Hobbes on the same date. Clause 15 mirrors Clause 24 of Mary's agreement (suspension/investigation). Clause 8(b) mirrors Clause 13(b) (satisfaction threshold). Term: to 30 June 2025. Critical drafting defect: Clause 8(b) cross-references "Clause 24 of this agreement" — which does not exist (agreement has only 23 clauses). ICH countersignature not present on client's copy.
+            <div class="ev-source">Source: Educational Assistant Agreement and Schedule 2024–2025</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="regulatory">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">11 Nov 2024</span>
+            <span class="pill">Regulatory</span>
+          </div>
+          <div class="ev-title">Child Protection &amp; Safe Sleep Training completed — Mary &amp; Robert</div>
+          <div class="ev-detail">
+            Both Mary Hobbes and Robert Hobbes complete Child Protection Training and Safe Sleep Training, as recorded in the ECRA educator compliance register. Evidences compliance record prior to suspension.
+            <div class="ev-source">Source: ECRA Educator Register Report (FOI File 254829)</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section-group">
+    <div class="section-label">Pre-Suspension — May 2025</div>
+    <div class="track">
+
+      <div class="ev" data-c="regulatory">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">19 May 2025</span>
+            <span class="pill">Regulatory</span>
+          </div>
+          <div class="ev-title">ECRA Educator Visit — home inspection, all compliance items satisfactory</div>
+          <div class="ev-detail">
+            Regulatory visit conducted 11:15–12:45 (1h 30 min on-site). All checklist items confirmed: environment/paperwork, daily home environment, items displayed, excursion/transport records, outdoor areas, harmony/time sheets. Blue cards and licences verified. Service signature dated 20 May 2025; Educator signature 27 May 2025. Positive compliance picture two days before suspension.
+            <div class="ev-source">Source: Visit Report, 19 May 2025 (2 days pre-suspension)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev milestone" data-c="regulatory">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">21 May 2025</span>
+            <span class="pill">Regulatory / Employment</span>
+            <span class="flag">★ Suspension — Cause of Action Arises</span>
+          </div>
+          <div class="ev-title">ICH issues Pre-Suspension Notification to Mary &amp; Robert — both suspended</div>
+          <div class="ev-detail">
+            ICH (My Place FDC) issues suspension notice to Mary Hobbes under Clause 24 of the Educator Agreement and to Robert Hobbes under Clause 15 of the Educational Assistant Agreement. Nature of allegation not disclosed to either. No Clause 8(b)/13(b) threshold of unsatisfactory work established. No investigation commenced by ICH. Suspension is unilateral. ICH subsequently argues it coordinated with Child Safety / CPIU before issuing the notice — but coordination does not relieve ICH of its own contractual obligations. This is the date the primary contractual cause of action accrues. Financial loss begins.
+            <div class="ev-source">Source: Pre-Suspension Notification dated 21 May 2025</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="source-files">
+    <div class="source-files-title">📁 Folder: Pre-Suspension</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Pre-Suspension Notification dated 21 May 2025</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Visit Report, 19 May 2025 (2 days pre-suspension)</div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     TAB 2: POST SUSPENSION
+     Files: ECRA Complaint Submission 29 May 2025
+             ECRA Response 30 May 2025
+             Email to and from Manager 23 May 2025
+             Formal Statement 27 May 2025
+             ICH CEO Reply 28 May 2025
+             Resignation Letter 29 May 2025
+     ══════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-post-suspension">
+
+  <div class="section-group">
+    <div class="section-label">Post Suspension — May 2025</div>
+    <div class="track">
+
+      <div class="ev" data-c="regulatory">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">22 May 2025</span>
+            <span class="pill">Regulatory</span>
+          </div>
+          <div class="ev-title">ECRA commences preliminary enquiries into the allegation</div>
+          <div class="ev-detail">
+            ECRA officers (PRO Bramwell, SRO Ambrosiussen, M.R. Baldwin) make phone calls with the Approved Provider representative and review the educator register. Mary advises ECRA she has been suspended but was not provided the allegation. ECRA refers her back to the Approved Provider.
+            <div class="ev-source">Source: ECRA Reactive Decision Record Part B (FOI File 254829)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="employment">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">23 May 2025</span>
+            <span class="pill">Employment</span>
+          </div>
+          <div class="ev-title">Mary emails ICH Manager (Kelsey Hambleton) — income concern and family distress</div>
+          <div class="ev-detail">
+            Mary writes to Kelsey Hambleton stating: no ECRA correspondence received; significant emotional and financial distress caused; a new client has had to withdraw enrolment. Notes this is the family's sole source of income. States she has contacted lawyers.
+            <div class="ev-source">Source: Email to and Reply from Manager, 23 May 2025</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="employment">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">23 May 2025</span>
+            <span class="pill">Employment</span>
+          </div>
+          <div class="ev-title">ICH Manager responds — cannot provide information; refers to support lines</div>
+          <div class="ev-detail">
+            Kelsey Hambleton acknowledges impact on Mary and family, confirms ICH is committed to supporting them, but states it cannot provide information due to Child Safety directions. Cannot provide expected timeframe. Provides Lifeline and Beyond Blue contacts. Does not lift suspension.
+            <div class="ev-source">Source: Email to and Reply from Manager, 23 May 2025</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="employment">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">27 May 2025</span>
+            <span class="pill">Employment</span>
+          </div>
+          <div class="ev-title">Mary submits Formal Statement in Response to Suspension to ICH</div>
+          <div class="ev-detail">
+            Mary provides written statement to ICH disputing the basis for suspension, asserting procedural unfairness, and citing failure to comply with the Child Protection Act 1999 threshold assessment requirements.
+            <div class="ev-source">Source: Formal Statement in Response to Suspension Notice, 27 May 2025</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="employment">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">28 May 2025</span>
+            <span class="pill">Employment</span>
+          </div>
+          <div class="ev-title">ICH CEO replies to Mary's formal statement</div>
+          <div class="ev-detail">
+            ICH responds to formal statement. No investigation commenced. No resolution or timeline provided. Allegation still not disclosed.
+            <div class="ev-source">Source: ICH CEO Reply, 28 May 2025</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev milestone" data-c="employment">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">29 May 2025</span>
+            <span class="pill">Employment</span>
+            <span class="flag">Key Event</span>
+          </div>
+          <div class="ev-title">Mary Hobbes resigns from My Place FDC — effective immediately</div>
+          <div class="ev-detail">
+            Mary submits resignation letter to Kelsey Hambleton citing: (1) procedural unfairness and failure of proper threshold assessment; (2) professionally damaging and distressing handling of the suspension; (3) lack of proactive support from the Service. Arguably a constructive dismissal caused by ICH's own unlawful suspension conduct. ICH later argues this resignation "superseded" its investigation obligation — a position the Hobbes dispute.
+            <div class="ev-source">Source: Resignation Letter, 29 May 2025</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="regulatory">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">29 May 2025</span>
+            <span class="pill">Regulatory</span>
+          </div>
+          <div class="ev-title">Mary lodges formal complaint with ECRA</div>
+          <div class="ev-detail">
+            Formal complaint submission lodged by Mary Hobbes with the Early Childhood Regulatory Authority regarding ICH's handling of the suspension process.
+            <div class="ev-source">Source: ECRA Complaint Submission, 29 May 2025</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="regulatory">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">30 May 2025</span>
+            <span class="pill">Regulatory</span>
+          </div>
+          <div class="ev-title">ECRA acknowledges complaint — investigation to be conducted</div>
+          <div class="ev-detail">
+            ECRA responds to Mary's complaint, acknowledging receipt and confirming investigation will proceed under the Education and Care Services National Law.
+            <div class="ev-source">Source: ECRA Response, 30 May 2025</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="source-files">
+    <div class="source-files-title">📁 Folder: Post Suspension</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>ECRA Complaint Submission, 29 May 2025</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>ECRA Response, 30 May 2025</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Email to and Reply from Manager, 23 May 2025</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Formal Statement in Response to Suspension Notice, 27 May 2025</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>ICH CEO Reply, 28 May 2025</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Resignation Letter, 29 May 2025</div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     TAB 3: AGREEMENT EXPIRY FAIR WORK & ECRA DECISION
+     Files: Educational Assistant Agreement and Schedule 2024-2025
+             Educator Agreement and Schedule 2024-2025
+             Form F3 Response; Notice of Discontinuance
+             Investigation Decision — Mary Hobbes (ECRA)
+             Investigation Decision — Robert Hobbes (ECRA)
+             Mapien Correspondence, 14 August 2025
+     ══════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-agreement-expiry">
+
+  <div class="section-group">
+    <div class="section-label">Agreement Expiry — June 2025</div>
+    <div class="track">
+
+      <div class="ev milestone" data-c="employment">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">3 Jun 2024</span>
+            <span class="pill">Employment</span>
+            <span class="flag">Key Document</span>
+          </div>
+          <div class="ev-title">Educator Agreement signed — Mary Hobbes &amp; ICH</div>
+          <div class="ev-detail">
+            Educator Agreement and Schedule executed between Mary Hobbes and Inala Community House. Term: to 30 June 2025. Key clauses: Clause 24 (suspension/investigation power); Clause 13(b) (satisfaction threshold for termination). ICH's exercise of Clause 24 on 21 May 2025 is the primary contractual act under challenge.
+            <div class="ev-source">Source: Educator Agreement and Schedule 2024–2025</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev milestone" data-c="employment">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">5 Jun 2024</span>
+            <span class="pill">Employment</span>
+            <span class="flag">Key Document</span>
+          </div>
+          <div class="ev-title">Educational Assistant Agreement signed — Robert Hobbes &amp; ICH</div>
+          <div class="ev-detail">
+            Parallel agreement executed for Robert Hobbes. Clause 15 governs suspension/investigation. Clause 8(b) cross-references "Clause 24 of this agreement" — which does not exist (agreement has only 23 clauses). Critical drafting defect undermining ICH's primary contractual suspension mechanism.
+            <div class="ev-source">Source: Educational Assistant Agreement and Schedule 2024–2025</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev milestone" data-c="employment">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">30 Jun 2025</span>
+            <span class="pill">Employment</span>
+            <span class="flag">Key Date</span>
+          </div>
+          <div class="ev-title">Both Agreements expire — suspension never lifted, no investigation conducted</div>
+          <div class="ev-detail">
+            Educator Agreement (Mary) and Educational Assistant Agreement (Robert) both expire by their own terms. At expiry: ICH has conducted no investigation; has taken no action to lift the suspension; and has made no communication to Robert following his suspension on 21 May 2025. ICH now argues all obligations "lapsed" on this date — a position wrong at law. Accrued causes of action arising 21 May 2025 are not extinguished by the Agreement's expiry (Limitation of Actions Act 1974 (Qld) s 10(1)(a) — limitation runs to ~May 2031).
+            <div class="ev-source">Source: Educator Agreement; Educational Assistant Agreement; ICH Response Analysis 21 May 2026</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section-group">
+    <div class="section-label">Fair Work Commission — July–August 2025</div>
+    <div class="track">
+
+      <div class="ev" data-c="legal">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">2 Jul 2025</span>
+            <span class="pill">Legal</span>
+          </div>
+          <div class="ev-title">Mapien files Form F3 in Fair Work Commission — matter U2025/9617</div>
+          <div class="ev-detail">
+            Mapien (Ben Cooper / Josh Cullen on behalf of ICH) files Employer Response to Unfair Dismissal Application in the Fair Work Commission. Matter subsequently discontinued by the Hobbes — confirmed by Notice of Discontinuance. No live Fair Work proceeding currently on foot.
+            <div class="ev-source">Source: Form F3 Response; Notice of Discontinuance</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="legal">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">14 Aug 2025</span>
+            <span class="pill">Legal</span>
+          </div>
+          <div class="ev-title">Mapien offers $2,000 in Fair Work proceeding — rejected</div>
+          <div class="ev-detail">
+            Mapien makes a $2,000 settlement offer within the Fair Work Commission proceedings. The Hobbes reject the offer as wholly inadequate given documented losses exceeding $200,000.
+            <div class="ev-source">Source: Mapien Correspondence, 14 August 2025</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section-group">
+    <div class="section-label">ECRA Investigation Decision — August 2025</div>
+    <div class="track">
+
+      <div class="ev milestone" data-c="regulatory">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">22 Aug 2025</span>
+            <span class="pill">Regulatory</span>
+            <span class="flag">★ ECRA Vindication — No Breach Confirmed</span>
+          </div>
+          <div class="ev-title">ECRA issues Investigation Decisions — all alleged breaches unsubstantiated</div>
+          <div class="ev-detail">
+            ECRA (Manager Wendy Baldwin, Authorised Officer Sarah Pitkethly, Metropolitan South Region) issues formal Investigation Decision letters to both Mary and Robert:<br><br>
+            <strong>Mary Hobbes:</strong> s165(3) National Law (inadequate supervision) — NOT confirmed. s167(3) (protection from harm/hazards) — NOT confirmed.<br>
+            <strong>Robert Hobbes:</strong> s166(3) (inappropriate discipline) — NOT confirmed.<br><br>
+            Decision record confirms nil breaches substantiated. This finding retroactively undermines the entire contractual trigger for the suspension. ICH takes no action following receipt of the outcome — suspension never lifted, no communication to Robert.
+            <div class="ev-source">Source: Investigation Decision — Mary Hobbes (ECRA); Investigation Decision — Robert Hobbes (ECRA)</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="source-files">
+    <div class="source-files-title">📁 Folder: Agreement Expiry Fair Work &amp; ECRA Decision</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Educational Assistant Agreement and Schedule 2024–2025</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Educator Agreement and Schedule 2024–2025</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Form F3 Response; Notice of Discontinuance</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Investigation Decision — Mary Hobbes (ECRA)</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Investigation Decision — Robert Hobbes (ECRA)</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Mapien Correspondence, 14 August 2025</div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     TAB 4: FAIRWORK AND ECRA DECISION
+     Files: Form F3 Response; Notice of Discontinuance
+     ══════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-fairwork-ecra">
+
+  <div class="section-group">
+    <div class="section-label">Fair Work Commission — Discontinuance</div>
+    <div class="track">
+
+      <div class="ev" data-c="legal">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">2 Jul 2025</span>
+            <span class="pill">Legal</span>
+          </div>
+          <div class="ev-title">Mapien files Form F3 Employer Response — Fair Work Commission U2025/9617</div>
+          <div class="ev-detail">
+            Mapien (Ben Cooper, signed Josh Cullen) files the Employer's formal Response to the Unfair Dismissal Application in Fair Work Commission matter U2025/9617. ICH denies dismissal occurred and relies on Mary's resignation as voluntary.
+            <div class="ev-source">Source: Form F3 Response; Notice of Discontinuance</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev milestone" data-c="legal">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">31 Jul 2025</span>
+            <span class="pill">Legal</span>
+            <span class="flag">Key Event</span>
+          </div>
+          <div class="ev-title">Notice of Discontinuance filed — Fair Work proceeding concluded</div>
+          <div class="ev-detail">
+            The Hobbes file a Notice of Discontinuance in the Fair Work Commission proceeding. No live Fair Work matter remains. The civil contract claim in the Queensland District Court is the sole active litigation pathway. The Form F3 remains a key piece of evidence — ICH's own admissions regarding the suspension and characterisation of Mary's departure are on record.
+            <div class="ev-source">Source: Form F3 Response; Notice of Discontinuance</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="source-files">
+    <div class="source-files-title">📁 Folder: Fairwork and ECRA Decision</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Form F3 Response; Notice of Discontinuance</div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     TAB 5: FOI
+     Files: File A — Early Childhood Regulatory Authority [released - immediate]
+             File B — Early Childhood Regulatory Authority [3rd party released] compacted
+             File B — Early Childhood Regulatory Authority [3rd party released]
+     ══════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-foi">
+
+  <div class="section-group">
+    <div class="section-label">Freedom of Information — ECRA Records</div>
+    <div class="track">
+
+      <div class="ev milestone" data-c="regulatory">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">26 Mar 2026</span>
+            <span class="pill">Regulatory</span>
+            <span class="flag">Key Document</span>
+          </div>
+          <div class="ev-title">FOI File A released — ECRA records (immediate release, 394 pages)</div>
+          <div class="ev-detail">
+            File A of the FOI response from the Early Childhood Regulatory Authority released with immediate effect. Contains 394 pages of ECRA records relating to the investigation of Mary and Robert Hobbes, including: educator register data, visit reports, reactive decision records, complaint handling records, and the investigation decision file. This is the primary evidentiary source for the ECRA investigation timeline and the basis for the "coordinated with" / "directed by" distinction.
+            <div class="ev-source">Source: File A — Early Childhood Regulatory Authority [released - immediate] (FOI File 254829)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="regulatory">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">10 Apr 2026</span>
+            <span class="pill">Regulatory</span>
+          </div>
+          <div class="ev-title">FOI File B released — ECRA third-party records (50 pages, compacted version)</div>
+          <div class="ev-detail">
+            File B of the FOI response released — third-party material from ECRA records. Compacted version (reduced file size) of the same release. Contains records relating to third-party involvement in or awareness of the investigation. Relevant to ICH's submissions to ECRA and any inconsistency between ICH's ECRA representations and its current contractual arguments.
+            <div class="ev-source">Source: File B — Early Childhood Regulatory Authority [3rd party released] compacted</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="regulatory">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">10 Apr 2026</span>
+            <span class="pill">Regulatory</span>
+          </div>
+          <div class="ev-title">FOI File B — full released version (third-party records, uncompacted)</div>
+          <div class="ev-detail">
+            Full uncompacted version of File B. Same release date as compacted version. Provides the complete third-party record set for counsel review and cross-reference with File A. ICH's submissions to ECRA may be located in this file and are relevant to whether ICH's contractual position is consistent with what it told the regulator at the time.
+            <div class="ev-source">Source: File B — Early Childhood Regulatory Authority [3rd party released]</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="source-files">
+    <div class="source-files-title">📁 Folder: FOI</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>File A — Early Childhood Regulatory Authority [released - immediate]</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>File B — Early Childhood Regulatory Authority [3rd party released] compacted</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>File B — Early Childhood Regulatory Authority [3rd party released]</div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     TAB 6: FINANCIAL LOSS & CENTRELINK
+     Files: advice_hobbes_advice FINAL 14 May 2026
+     ══════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-financial">
+
+  <div class="section-group">
+    <div class="section-label">Centrelink Income Support — 2025–2026</div>
+    <div class="track">
+
+      <div class="ev" data-c="centrelink">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">17 Nov – 11 Dec 2025</span>
+            <span class="pill">Centrelink</span>
+          </div>
+          <div class="ev-title">Centrelink income support — Period 1</div>
+          <div class="ev-detail">
+            Hobbes household commences Centrelink income support payments as a consequence of the suspension and loss of FDC income from 21 May 2025.
+            <div class="ev-source">Source: Centrelink Payment History, Period 1 (Nov–Dec 2025)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="centrelink">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">24 Dec 2025 – 19 Feb 2026</span>
+            <span class="pill">Centrelink</span>
+          </div>
+          <div class="ev-title">Centrelink income support — Period 2</div>
+          <div class="ev-detail">
+            Ongoing Centrelink support through the summer/holiday period into early 2026. Income support continues as FDC operations remain disrupted.
+            <div class="ev-source">Source: Centrelink Payment History, Period 2 (Dec 2025 – Feb 2026)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="centrelink">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">5 Mar – 30 Apr 2026</span>
+            <span class="pill">Centrelink</span>
+          </div>
+          <div class="ev-title">Centrelink income support — Period 3</div>
+          <div class="ev-detail">
+            Third recorded period of Centrelink income support, confirming ongoing financial impact flowing from the May 2025 suspension.
+            <div class="ev-source">Source: Centrelink Payment History, Period 3 (Mar–Apr 2026)</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section-group">
+    <div class="section-label">Total Loss Position &amp; Legal Advice</div>
+    <div class="track">
+
+      <div class="ev milestone" data-c="financial">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">FY 2024–25 / accruing</span>
+            <span class="pill">Financial</span>
+            <span class="flag">Total Loss Position</span>
+          </div>
+          <div class="ev-title">Documented total loss position: $214,934 (+accruing) / $229,934 incl. Lumi principal</div>
+          <div class="ev-detail">
+            <strong>Components:</strong><br>
+            • Lost FDC income from 21 May 2025 (+ accruing CCS losses) — primary head<br>
+            • Lumi Finance emergency loan: $15,000 principal (suspension-specific)<br>
+            • Household cashflow deficit: $58,635 (corroborating / alternative head)<br>
+            • Director loan (MDC to Robert &amp; Mary): $41,170 — drawn incrementally across FY2024–25, pre-dates suspension, not a suspension-specific recovery<br><br>
+            <strong>Demand position:</strong> $120,000 = 47.81% of $229,934 total documented position — a concession of 52.19%. Conservative and defensible.
+            <div class="ev-source">Source: Lawpath Legal Advice FINAL 14 May 2026; Bank Statements Q1–Q4; Payslips (Extend Pty Ltd / Ladison Pty Ltd)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev milestone" data-c="financial">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">14 May 2026</span>
+            <span class="pill">Financial</span>
+            <span class="flag">Key Document</span>
+          </div>
+          <div class="ev-title">Lawpath Legal Advice finalised — quantum verified, QDC proceedings confirmed</div>
+          <div class="ev-detail">
+            Final letter of advice issued. Key conclusions: (1) $120,000 demand is reasonable and defensible — 47.81% of $229,934 documented loss; (2) Robert's direct contractual claim materially strengthens the position; (3) payroll confirmation removes Mapien's best quantum argument (gross income v net profit); (4) Lumi Finance loan is suspension-specific; director loan pre-dates suspension; (5) if Mapien does not engage by 21 May 2026, matter to proceed to Queensland District Court.
+            <div class="ev-source">Source: advice_hobbes_advice FINAL 14 May 2026</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="source-files">
+    <div class="source-files-title">📁 Folder: Financial Loss &amp; CentreLink</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>advice_hobbes_advice FINAL 14 May 2026</div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     TAB 7: LEGAL PROCEEDINGS & DEMAND
+     Files: ICH Response to Demand 21 May 2026
+             Lawpath Letter to Mapien 30 April 2026
+             Letter of Demand to Inala Community House March 2026
+             Mapien Response 15 April 2026
+             Reply to Mapien 16 April 2026
+     ══════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-legal">
+
+  <div class="section-group">
+    <div class="section-label">Legal Proceedings &amp; Demand — 2026</div>
+    <div class="track">
+
+      <div class="ev milestone" data-c="legal">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">30 Mar 2026</span>
+            <span class="pill">Legal</span>
+            <span class="flag">Key Event</span>
+          </div>
+          <div class="ev-title">Letter of Demand sent to ICH — by Mary Hobbes (self-represented)</div>
+          <div class="ev-detail">
+            Formal letter of demand sent directly by Mary Hobbes to Inala Community House, asserting breach of the Educator Agreement and claiming loss and damage flowing from the unlawful suspension. Sent prior to Lawpath Legal's engagement.
+            <div class="ev-source">Source: Letter of Demand to Inala Community House, March 2026</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev milestone" data-c="legal">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">15 Apr 2026</span>
+            <span class="pill">Legal</span>
+            <span class="flag">Key Event</span>
+          </div>
+          <div class="ev-title">Mapien responds on behalf of ICH — denial of liability, Clause 24 reliance, costs threat</div>
+          <div class="ev-detail">
+            Mapien (Ben Cooper) responds to the letter of demand. Denies all liability. Relies on Clause 24 of Mary's Educator Agreement. States ICH's suspension was "entirely consistent" with its contractual powers. Does not address: (a) ECRA finding of 22 August 2025; (b) Clause 8(b) drafting defect in Robert's agreement; (c) ICH's failure to conduct any investigation under Clause 15/Clause 24; (d) Robert's separate direct contractual claim. Issues costs threat. Makes no counteroffer.
+            <div class="ev-source">Source: Mapien Response, 15 April 2026</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="legal">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">16 Apr 2026</span>
+            <span class="pill">Legal</span>
+          </div>
+          <div class="ev-title">Hobbes reply to Mapien — revised demand of $120,000, open to 7 May 2026</div>
+          <div class="ev-detail">
+            Hobbes reply raises revised demand of $120,000, open for acceptance until 7 May 2026. Introduces Robert's direct contractual claim for the first time. Identifies Clause 8(b) drafting defect (cross-reference to non-existent "Clause 24" in Robert's 23-clause agreement). Demand represents ~48% of $229,934 total documented loss position.
+            <div class="ev-source">Source: Reply to Mapien, 16 April 2026</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="legal">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">30 Apr 2026</span>
+            <span class="pill">Legal</span>
+          </div>
+          <div class="ev-title">Lawpath supplementary letter — mediation proposed, deadline extended to 21 May</div>
+          <div class="ev-detail">
+            Lawpath (Albert Jaucian) writes to Mapien supplementing the demand with Robert's direct contractual standing. Proposes without-prejudice mediation on terms and timing of payment only. Extends acceptance deadline from 7 May to 21 May 2026. Confirms $120,000 is the final position, not subject to negotiation. Confirms Mez Day Care Pty Ltd's 2011 incorporation date to rebut ICH's "planned departure" argument.
+            <div class="ev-source">Source: Lawpath Letter to Mapien, 30 April 2026</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="legal">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">6–7 May 2026</span>
+            <span class="pill">Legal</span>
+          </div>
+          <div class="ev-title">Additional information provided to Lawpath — MDC details &amp; Albert's advice</div>
+          <div class="ev-detail">
+            Mary Hobbes (6 May) and Albert Jaucian (7 May) exchange additional information notes regarding the quantum, Lumi Finance figure, director loan characterisation, Robert's director status on ASIC records, and consequential loss particularisation ahead of finalising advice.
+            <div class="ev-source">Source: MDC Additional Information 06 May; Albert Additional Information 07 May</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev" data-c="legal">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">14 May 2026</span>
+            <span class="pill">Legal</span>
+          </div>
+          <div class="ev-title">Lawpath Legal Advice finalised (Albert Jaucian)</div>
+          <div class="ev-detail">
+            Final letter of advice issued. Key conclusions: (1) $120,000 demand is reasonable and defensible — 47.81% of $229,934 documented loss; (2) Robert's direct contractual claim materially strengthens the position; (3) payroll confirmation removes Mapien's best quantum argument (gross income v net profit); (4) Lumi Finance loan is suspension-specific; director loan pre-dates suspension; (5) if Mapien does not engage by 21 May 2026, matter to proceed to Queensland District Court.
+            <div class="ev-source">Source: Lawpath Legal Advice FINAL, 14 May 2026</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev milestone" data-c="legal">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">21 May 2026</span>
+            <span class="pill">Legal</span>
+            <span class="flag">★ Today — Deadline Expired</span>
+          </div>
+          <div class="ev-title">ICH Response to Demand (Mapien) — $120,000 demand rejected; mediation refused</div>
+          <div class="ev-detail">
+            Mapien (Ben Cooper) issues two-page response on behalf of ICH. Rejects the $120,000 demand outright. Refuses without-prejudice mediation. ICH's six arguments and their assessed strength:<br><br>
+            (1) ICH "did not interfere" with ECRA investigation — WEAK (does not relieve ICH of its own Clause 15 obligations).<br>
+            (2) Mary's 29 May 2025 resignation "superseded" investigation obligation — WEAK (arguably constructive dismissal; no express term creates dependency).<br>
+            (3) All obligations lapsed on 30 June 2025 expiry — WRONG AT LAW (accrued causes of action survive expiry).<br>
+            (4) Robert's claim is derivative of Mary's — WRONG (Robert has a direct independent contractual relationship).<br>
+            (5) Clause 8(b) cross-reference to "Clause 24" — unaddressed; agreement has only 23 clauses; primary suspension mechanism is fatally defective.<br>
+            (6) ECRA finding — completely unaddressed in ICH's response.<br><br>
+            <strong>Next step: Proceed to Queensland District Court.</strong> Limitation period to ~May 2031.
+            <div class="ev-source">Source: ICH Response to Demand, 21 May 2026; ICH Response Analysis (Privileged), 21 May 2026</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="source-files">
+    <div class="source-files-title">📁 Folder: Legal Proceedings &amp; Demand</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>ICH Response to Demand, 21 May 2026</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Lawpath Letter to Mapien, 30 April 2026</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Letter of Demand to Inala Community House, March 2026</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Mapien Response, 15 April 2026</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>Reply to Mapien, 16 April 2026</div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     TAB 8: COUNSEL PREP
+     Files: Child_Safety_ECRA_Defence_Analysis_Hobbes_v_ICH (Word)
+             ECSNL_Defence_Analysis_Hobbes_v_ICH (Word)
+             ICH_Response_Analysis_Legal_Analysis (PDF)
+     ══════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-counsel">
+
+  <div class="section-group">
+    <div class="section-label">Counsel Preparation Documents — May 2026</div>
+    <div class="track">
+
+      <div class="ev milestone" data-c="legal">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">21 May 2026</span>
+            <span class="pill">Legal</span>
+            <span class="flag">Counsel Brief</span>
+          </div>
+          <div class="ev-title">Child Safety &amp; ECRA Defence Analysis prepared for incoming counsel</div>
+          <div class="ev-detail">
+            Analysis document addressing ICH's likely defence arguments relating to Child Safety involvement and ECRA jurisdiction. Covers the "coordinated with" vs "directed by" distinction; the effect of Child Safety's involvement on ICH's contractual obligations; and the ECRA investigation findings as they bear on the defence case.
+            <div class="ev-source">Source: Child_Safety_ECRA_Defence_Analysis_Hobbes_v_ICH (Word document)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev milestone" data-c="legal">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">21 May 2026</span>
+            <span class="pill">Legal</span>
+            <span class="flag">Counsel Brief</span>
+          </div>
+          <div class="ev-title">ECSNL Defence Analysis prepared for incoming counsel</div>
+          <div class="ev-detail">
+            Analysis of ICH's likely defence arguments under the Education and Care Services National Law (ECSNL). Addresses ICH's regulatory obligations and how they interact with its contractual obligations to Mary and Robert. Relevant to the defence argument that ICH was bound to act as it did.
+            <div class="ev-source">Source: ECSNL_Defence_Analysis_Hobbes_v_ICH (Word document)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev milestone" data-c="legal">
+        <div class="dot"><div class="dot-inner"></div></div>
+        <div class="card">
+          <div class="card-head">
+            <span class="ev-date">21–22 May 2026</span>
+            <span class="pill">Legal</span>
+            <span class="flag">Counsel Brief — Privileged</span>
+          </div>
+          <div class="ev-title">ICH Response Analysis — AI legal analysis of Mapien's 21 May response</div>
+          <div class="ev-detail">
+            Detailed legal analysis of ICH's 21 May 2026 Response to Demand (Mapien letter). Assesses all six ICH arguments for merit. Identifies four core foundations for the Hobbes' civil claim: (1) ECRA vindication; (2) non-existent Clause 24 defect; (3) accrued rights survive expiry; (4) cannot profit from own wrong. Prepared as a privileged research and drafting aid for qualified legal counsel. Must be reviewed, verified, and adapted by a qualified Australian lawyer.
+            <div class="ev-source">Source: ICH_Response_Analysis_Legal_Analysis (PDF — PRIVILEGED AND CONFIDENTIAL)</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="source-files">
+    <div class="source-files-title">📁 Folder: Counsel Prep</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type doc">DOC</span>Child_Safety_ECRA_Defence_Analysis_Hobbes_v_ICH</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type doc">DOC</span>ECSNL_Defence_Analysis_Hobbes_v_ICH</div>
+    <div class="source-file-item"><span class="file-icon">📄</span><span class="file-type pdf">PDF</span>ICH_Response_Analysis_Legal_Analysis</div>
+  </div>
+
+</div>
+
+</div><!-- end tl-wrap -->
+
+<script>
+  // ── Tab switching ──
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + target).classList.add('active');
+    });
+  });
+
+  // ── Expand / Collapse cards ──
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', () => card.classList.toggle('open'));
+  });
+</script>
+
+</body>
+</html>

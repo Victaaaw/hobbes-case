@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hobbes v ICH — Case Mind Map</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;500;600&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #080a10; font-family: 'Source Sans 3', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+  .header {
+    background: rgba(8,10,16,0.97); border-bottom: 1px solid #1c1f2c;
+    padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; flex-shrink: 0; z-index: 100;
+  }
+  .title { font-family: 'Playfair Display', serif; font-size: 16px; color: #f5f0e8; }
+  .sub { font-size: 10px; color: #5a5d6a; letter-spacing: 0.12em; text-transform: uppercase; }
+  .legend { display: flex; gap: 10px; margin-left: auto; align-items: center; flex-wrap: wrap; }
+  .li { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #9ca3af; }
+  .ld { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+  .toolbar {
+    display: flex; align-items: center; gap: 6px; padding: 6px 22px;
+    background: #0a0c14; border-bottom: 1px solid #14172a; flex-shrink: 0;
+  }
+  .hint { font-size: 10px; color: #3a3d4a; letter-spacing: 0.05em; font-style: italic; margin-right: auto; }
+  .zbtn {
+    width: 28px; height: 28px; border-radius: 5px; border: 1px solid #2a2d40;
+    background: #12152a; color: #9ca3af; font-size: 16px; line-height: 1;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, color 0.15s;
+  }
+  .zbtn:hover { background: #1e2140; color: #e8e4dc; }
+  .zoom-label { font-size: 11px; color: #6b7280; min-width: 38px; text-align: center; letter-spacing: 0.04em; }
+  .collapse-all-btn {
+    margin-left: 10px; padding: 4px 10px; border-radius: 5px; border: 1px solid #2a2d40;
+    background: #12152a; color: #9ca3af; font-size: 11px; cursor: pointer;
+    transition: background 0.15s, color 0.15s; font-family: 'Source Sans 3', sans-serif;
+  }
+  .collapse-all-btn:hover { background: #1e2140; color: #e8e4dc; }
+
+  #canvas { flex: 1; overflow: hidden; cursor: grab; user-select: none; }
+  #canvas.dragging { cursor: grabbing; }
+  #svg-map { display: block; width: 100%; height: 100%; }
+
+  .tooltip {
+    position: fixed; background: #141829; border: 1px solid #2d3148;
+    border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #ccd6f6;
+    max-width: 320px; line-height: 1.55; pointer-events: none; z-index: 300;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6); display: none;
+  }
+  .tooltip strong { color: #e8e4dc; display: block; margin-bottom: 4px; font-size: 11.5px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="title">Hobbes v ICH — Case Mind Map</div>
+    <div class="sub">Chronology linked to defence resources · Privileged &amp; Confidential</div>
+  </div>
+  <div class="legend">
+    <div class="li"><div class="ld" style="background:#60a5fa"></div>Key Chronology</div>
+    <div class="li"><div class="ld" style="background:#34d399"></div>ECRA Vindication</div>
+    <div class="li"><div class="ld" style="background:#c084fc"></div>Contractual Claims</div>
+    <div class="li"><div class="ld" style="background:#f87171"></div>ICH Defences</div>
+    <div class="li"><div class="ld" style="background:#fb923c"></div>Plaintiff Weapons</div>
+    <div class="li"><div class="ld" style="background:#fbbf24"></div>Financial Quantum</div>
+    <div class="li"><div class="ld" style="background:#94a3b8; border-radius:1px; width:16px; height:2px; border-top:2px dashed #94a3b8;"></div>Strategic link</div>
+  </div>
+</div>
+
+<div class="toolbar">
+  <span class="hint">Scroll to zoom · Drag to pan · Click branch nodes to collapse/expand</span>
+  <button class="zbtn" id="btn-zout" title="Zoom out">−</button>
+  <span class="zoom-label" id="zoom-label">100%</span>
+  <button class="zbtn" id="btn-zin" title="Zoom in">+</button>
+  <button class="zbtn" id="btn-reset" title="Reset view" style="font-size:13px;">⌖</button>
+  <button class="collapse-all-btn" id="btn-collapse-all">Collapse All</button>
+</div>
+
+<div id="canvas">
+  <svg id="svg-map" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="glow" x="-25%" y="-25%" width="150%" height="150%">
+        <feGaussianBlur stdDeviation="4" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="glow-s" x="-15%" y="-15%" width="130%" height="130%">
+        <feGaussianBlur stdDeviation="2" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <g id="map-root"></g>
+  </svg>
+</div>
+
+<div class="tooltip" id="tip"></div>
+
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+
+// ── Colour palettes ──────────────────────────────────────────────────────────
+const PAL = {
+  center:           { fill:'#1a1e38', stroke:'#8899cc', txt:'#f0eaff', sw:2.5, glow:'glow' },
+  'branch-chrono':  { fill:'#0c1e38', stroke:'#60a5fa', txt:'#93c5fd', sw:1.5 },
+  'branch-ecra':    { fill:'#0b2a1e', stroke:'#34d399', txt:'#6ee7b7', sw:1.5 },
+  'branch-ich':     { fill:'#2a0d0d', stroke:'#f87171', txt:'#fca5a5', sw:1.5 },
+  'branch-contract':{ fill:'#1c0d38', stroke:'#c084fc', txt:'#d8b4fe', sw:1.5 },
+  'branch-weapons': { fill:'#2a1600', stroke:'#fb923c', txt:'#fdba74', sw:1.5 },
+  'branch-quantum': { fill:'#2a2000', stroke:'#fbbf24', txt:'#fde68a', sw:1.5 },
+  'chrono-key':     { fill:'#0e2045', stroke:'#60a5fa', txt:'#dbeafe', sw:2, glow:'glow-s' },
+  'chrono':         { fill:'#091625', stroke:'#3b82f6', txt:'#bfdbfe', sw:1 },
+  'ecra':           { fill:'#091d14', stroke:'#10b981', txt:'#a7f3d0', sw:1 },
+  'ecra-key':       { fill:'#0c2a1a', stroke:'#34d399', txt:'#6ee7b7', sw:2, glow:'glow-s' },
+  'ich-mod':        { fill:'#280c0c', stroke:'#f87171', txt:'#fecaca', sw:1.5 },
+  'ich-weak':       { fill:'#200a0a', stroke:'#b91c1c', txt:'#fca5a5', sw:1 },
+  'ich-reverse':    { fill:'#2a0e0e', stroke:'#f87171', txt:'#fed7aa', sw:2, glow:'glow-s' },
+  'contract-key':   { fill:'#180c32', stroke:'#a855f7', txt:'#e9d5ff', sw:2, glow:'glow-s' },
+  'contract':       { fill:'#120928', stroke:'#7c3aed', txt:'#ddd6fe', sw:1 },
+  'weapon-key':     { fill:'#281000', stroke:'#f97316', txt:'#fed7aa', sw:2, glow:'glow-s' },
+  'weapon':         { fill:'#200c00', stroke:'#ea580c', txt:'#fdba74', sw:1 },
+  'quantum':        { fill:'#201800', stroke:'#d97706', txt:'#fde68a', sw:1 },
+};
+
+function edgeCol(cat) {
+  if (cat.includes('chrono'))   return '#3b82f6';
+  if (cat.includes('ecra'))     return '#10b981';
+  if (cat.includes('ich'))      return '#ef4444';
+  if (cat.includes('contract')) return '#9333ea';
+  if (cat.includes('weapon'))   return '#ea580c';
+  if (cat.includes('quantum'))  return '#d97706';
+  return '#4a4d5a';
+}
+
+// ── Node data ────────────────────────────────────────────────────────────────
+const nodes = [
+  { id:'hub', x:790, y:478, w:185, h:72, rx:14, cat:'center',
+    lines:['Hobbes v ICH','QDC Civil Claim'],
+    detail:'Civil claim: breach of Educator Agreement (Mary) and Educational Assistant Agreement (Robert) by Inala Community House t/as My Place Family Day Care. Respondent represented by Mapien Workplace Strategists (Ben Cooper). $120,000 demand rejected 21 May 2026. Proceeding to Queensland District Court. Limitation period: ~May 2031.' },
+
+  // CHRONOLOGY
+  { id:'b-chrono', x:500, y:408, w:122, h:34, rx:8, cat:'branch-chrono', branch:true,
+    lines:['Key Events'], children:['c1','c2','c3','c4','c5'], detail:'' },
+  { id:'c1', x:148, y:175, w:228, h:56, rx:6, cat:'chrono-key', parent:'b-chrono',
+    lines:['21 May 2025','Suspension Issued ★'],
+    detail:'ICH suspends Mary (Clause 24) and Robert (Clause 15). No satisfaction threshold established (Cl.8(b)/13(b)). Allegation undisclosed. No investigation commenced. Primary cause of action accrues. Financial loss begins. Cross-links → Cl.24/15 No Investigation; s178 Usurped; s51(2) Monitoring Breach.' },
+  { id:'c2', x:135, y:278, w:215, h:46, rx:6, cat:'chrono', parent:'b-chrono',
+    lines:['29 May 2025','Mary Resigns'],
+    detail:'Mary submits resignation effective immediately, citing procedural unfairness and failure to conduct proper threshold assessment under the Child Protection Act. Arguably constructive dismissal caused by ICH\'s own conduct. Cross-link → Constructive Dismissal argument.' },
+  { id:'c3', x:132, y:368, w:218, h:46, rx:6, cat:'chrono', parent:'b-chrono',
+    lines:['30 Jun 2025','Both Agreements Expire'],
+    detail:'Educator Agreement (Mary) and Educational Assistant Agreement (Robert) expire. No investigation conducted; suspension never lifted; no communication to Robert. ICH argues obligations lapsed — wrong at law. Cross-link → Accrued Rights Survive Expiry (Photo Production).' },
+  { id:'c4', x:142, y:460, w:225, h:56, rx:6, cat:'chrono-key', parent:'b-chrono',
+    lines:['22 Aug 2025','ECRA Clears Both Educators ★'],
+    detail:'ECRA Investigation Decisions: Mary — s165(3) NOT confirmed, s167(3) NOT confirmed. Robert — s166(3) NOT confirmed. Nil breaches substantiated. ICH takes no action. Cross-links → ECRA Vindication Shield; Weakens s2A; Destroys s165/Reg163 defences.' },
+  { id:'c5', x:145, y:565, w:228, h:56, rx:6, cat:'chrono-key', parent:'b-chrono',
+    lines:['21 May 2026','ICH Rejects $120,000 Demand ★'],
+    detail:'Mapien (Ben Cooper) rejects demand; refuses mediation. Two-page response does not address: ECRA finding; Clause 8(b) drafting defect; Robert\'s independent contractual claim. Six identified arguments — majority have significant legal weaknesses. Matter proceeds to QDC.' },
+
+  // ECRA VINDICATION
+  { id:'b-ecra', x:660, y:230, w:153, h:34, rx:8, cat:'branch-ecra', branch:true,
+    lines:['ECRA Vindication Shield'], children:['e1','e2','e3'], detail:'' },
+  { id:'e1', x:388, y:82, w:210, h:54, rx:6, cat:'ecra', parent:'b-ecra',
+    lines:['Mary cleared:','s165(3) & s167(3) NOT confirmed'],
+    detail:'ECRA Investigation Decision (22 Aug 2025): no inadequate supervision (s165(3)); no failure to protect from harm/hazards (s167(3)). Issued by Wendy Baldwin, Manager Metropolitan South Region. Direct counter to ICH\'s child safety premise.' },
+  { id:'e2', x:648, y:58, w:210, h:54, rx:6, cat:'ecra', parent:'b-ecra',
+    lines:['Robert cleared:','s166(3) NOT confirmed'],
+    detail:'ECRA Investigation Decision (22 Aug 2025): no inappropriate discipline (s166(3)) against Robert Hobbes. Nil breaches substantiated. ECRA recommended quality considerations only. Destroys Reg 163 fit-and-proper justification.' },
+  { id:'e3', x:912, y:82, w:228, h:54, rx:6, cat:'ecra-key', parent:'b-ecra',
+    lines:['ECRA clearance retroactively','destroys ICH\'s entire premise ★'],
+    detail:'22 Aug 2025 clearance removes the foundation of every ECSNL defence ICH may raise — child safety, supervision, fit-and-proper. If there was no breach, there was no basis for the suspension. Plaintiffs\' primary shield. Must be drawn to court\'s attention first.' },
+
+  // ICH DEFENCES
+  { id:'b-ich', x:1028, y:315, w:140, h:34, rx:8, cat:'branch-ich', branch:true,
+    lines:['ICH Anticipated Defences'], children:['d1','d2','d3','d4','d5','d6'], detail:'' },
+  { id:'d1', x:1228, y:130, w:200, h:54, rx:6, cat:'ich-mod', parent:'b-ich',
+    lines:['s2A Paramount Consideration','⚠ MODERATE (temporal problem)'],
+    detail:'ICH will invoke child safety as paramount. Counter: (1) s2A enacted 27 Feb 2026 — suspension was May 2025, nine months before the section existed; (2) ECRA found no child safety breach. At most, child safety was a guiding principle under s3 in 2025, not a paramount statutory duty.' },
+  { id:'d2', x:1360, y:215, w:192, h:46, rx:6, cat:'ich-weak', parent:'b-ich',
+    lines:['s51(1)(a) Safety Condition','✗ WEAK'],
+    detail:'ICH argues service approval required immediate action. Fails: (1) condition cuts both ways; (2) s51(2) required ICH to monitor and support educators throughout — which ICH entirely failed to do. ICH cannot use a condition as a shield while breaching it.' },
+  { id:'d3', x:1388, y:300, w:192, h:46, rx:6, cat:'ich-weak', parent:'b-ich',
+    lines:['s165 Supervision Offence','✗ WEAK'],
+    detail:'ICH argues supervision concern triggered suspension. Destroyed by ECRA: s165(3) — inadequate supervision — NOT confirmed against Mary. Double-edged: if ICH argues risk was real, it must explain why it did nothing after ECRA cleared her.' },
+  { id:'d4', x:1372, y:385, w:200, h:56, rx:6, cat:'ich-reverse', parent:'b-ich',
+    lines:['s178 Suspension Power','★ WEAK / REVERSE — gift to Plaintiffs'],
+    detail:'s178 vests FDC educator suspension power in ECRA — not the approved provider. ICH exercised a power the statute expressly reserves to the regulator. ECRA\'s choice not to issue a s178 direction is consistent with its ultimate finding of no breach.' },
+  { id:'d5', x:1325, y:470, w:198, h:46, rx:6, cat:'ich-mod', parent:'b-ich',
+    lines:['Reg 163 Fit & Proper Persons','⚠ MODERATE'],
+    detail:'ICH may argue concern about Robert\'s fitness at the FDC residence. Counter: ECRA investigated s166(3) — the underlying conduct — and found NO breach. ECRA clearance eliminates the ongoing fitness justification post-22 Aug 2025.' },
+  { id:'d6', x:1240, y:550, w:202, h:48, rx:6, cat:'ich-mod', parent:'b-ich',
+    lines:['Reg 168 Policies & CMP','⚠ MODERATE (procedural only)'],
+    detail:'ICH will argue it followed its Complaints Management Procedure. However: the CMP required (a) inform educator of complaint; (b) investigation; (c) right of response within 14 days. ICH did none of these. Having the policy is not the same as following it.' },
+
+  // PLAINTIFF WEAPONS
+  { id:'b-weapons', x:1030, y:668, w:148, h:34, rx:8, cat:'branch-weapons', branch:true,
+    lines:['Plaintiff Statutory Weapons'], children:['w1','w2','w3','w4'], detail:'' },
+  { id:'w1', x:1248, y:642, w:220, h:56, rx:6, cat:'weapon-key', parent:'b-weapons',
+    lines:['s178: ICH Usurped','ECRA\'s Suspension Power ★'],
+    detail:'s178 ECSNL: FDC educator suspension power belongs to ECRA — not the approved provider. ICH exercised a statutory function reserved to the regulator. Parliament deliberately vested this in ECRA because of suspension\'s significant impact on livelihoods.' },
+  { id:'w2', x:1282, y:727, w:206, h:54, rx:6, cat:'weapon', parent:'b-weapons',
+    lines:['s51(2): ICH Breached','Monitoring & Support Duty'],
+    detail:'s51(2) required ICH to ensure Mary was adequately monitored and supported by a coordinator throughout. ICH provided zero communication, support, or resolution after the suspension notice. Indefinite suspension without contact is the antithesis of adequate monitoring.' },
+  { id:'w3', x:1255, y:812, w:205, h:46, rx:6, cat:'weapon', parent:'b-weapons',
+    lines:['Reg 176/176A:','Notification Content Deficient'],
+    detail:'Regs 176 and 176A required adequate notification content. The suspension notice was sparse and did not identify the specific conduct alleged, breaching the regulatory notification requirements. ICH gave Mary almost no information about the basis for the suspension.' },
+  { id:'w4', x:1082, y:884, w:218, h:54, rx:6, cat:'weapon-key', parent:'b-weapons',
+    lines:['Cannot Profit from Own Wrong','(Constructive Dismissal Principle) ★'],
+    detail:'ICH cannot rely on Mary\'s 29 May 2025 resignation — arguably induced by ICH\'s own unlawful suspension — to extinguish its obligations to Robert (the "supersession" argument). A party cannot benefit from consequences caused by its own wrongful conduct.' },
+
+  // CONTRACTUAL CLAIMS
+  { id:'b-contract', x:578, y:715, w:132, h:34, rx:8, cat:'branch-contract', branch:true,
+    lines:['Contractual Claims'], children:['a1','a2','a3','a4','a5'], detail:'' },
+  { id:'a1', x:155, y:740, w:220, h:54, rx:6, cat:'contract-key', parent:'b-contract',
+    lines:['Clause 24/15:','No Investigation Conducted ★'],
+    detail:'Clause 24 (Mary\'s Educator Agreement) and Clause 15 (Robert\'s Educational Assistant Agreement) required ICH to conduct an investigation after suspending the educators. ICH conducted no investigation from 21 May to 30 June 2025 — the suspension ran to expiry without any investigative step.' },
+  { id:'a2', x:138, y:830, w:218, h:46, rx:6, cat:'contract', parent:'b-contract',
+    lines:['Clause 8(b)/13(b):','Satisfaction Threshold Not Met'],
+    detail:'Suspension under Clause 8(b) (Robert) and Clause 13(b) (Mary) required work to not have been carried out to the satisfaction of the Service. No such finding had been made at the time of suspension on 21 May 2025.' },
+  { id:'a3', x:148, y:915, w:225, h:58, rx:6, cat:'contract-key', parent:'b-contract',
+    lines:['Clause 8(b) Defect (Robert):','Cross-ref to non-existent Cl.24 ★'],
+    detail:'Clause 8(b) of Robert\'s Educational Assistant Agreement cross-references "clause 24 of this agreement." The agreement has only 23 clauses. Clause 24 does not exist. The primary contractual suspension mechanism is fatally defective.' },
+  { id:'a4', x:405, y:932, w:210, h:48, rx:6, cat:'contract', parent:'b-contract',
+    lines:['Accrued Rights Survive Expiry','(Photo Production principle)'],
+    detail:'ICH argues obligations lapsed on 30 Jun 2025 Agreement expiry. Wrong at law: cause of action arose 21 May 2025 before expiry. Photo Production v Securicor [1980] AC 827; Alstom v Yokogawa [2012] SASC 49. Limitation period: ~May 2031.' },
+  { id:'a5', x:648, y:918, w:205, h:54, rx:6, cat:'contract', parent:'b-contract',
+    lines:['Constructive Dismissal:','Resignation Induced by ICH'],
+    detail:'Mary\'s 29 May 2025 resignation was arguably not voluntary but a response to ICH\'s unlawful suspension. If the court accepts constructive dismissal, ICH\'s "supersession" argument collapses entirely.' },
+
+  // QUANTUM
+  { id:'b-quantum', x:783, y:855, w:122, h:34, rx:8, cat:'branch-quantum', branch:true,
+    lines:['Financial Quantum'], children:['q1','q2','q3'], detail:'' },
+  { id:'q1', x:565, y:972, w:198, h:50, rx:6, cat:'quantum', parent:'b-quantum',
+    lines:['Lost FDC Income + CCS','(from 21 May 2025 onwards)'],
+    detail:'Primary head: lost income as FDC educator and educator assistant from 21 May 2025, plus accruing Child Care Subsidy losses from disruption of Mez Day Care Pty Ltd operations. Payroll confirmation removes Mapien\'s best quantum argument (gross vs net profit).' },
+  { id:'q2', x:785, y:988, w:198, h:50, rx:6, cat:'quantum', parent:'b-quantum',
+    lines:['Lumi Finance $15,000','Cashflow deficit $58,635'],
+    detail:'Lumi Finance emergency loan ($15,000) is suspension-specific. Household cashflow deficit ($58,635) is corroborating/alternative head — framed as evidence of scale, not additive to lost income. Director loan ($41,170) pre-dates suspension.' },
+  { id:'q3', x:1012, y:972, w:218, h:50, rx:6, cat:'quantum', parent:'b-quantum',
+    lines:['Total: $229,934','Demand: $120,000 (47.81%)'],
+    detail:'Total documented loss: $214,934 + $15,000 Lumi principal = $229,934. $120,000 demand = 47.81% of total — a concession of 52.19%. Conservative and defensible for early settlement purposes.' },
+];
+
+// ── Edge data ────────────────────────────────────────────────────────────────
+const treeEdges = [
+  ['hub','b-chrono'],['hub','b-ecra'],['hub','b-ich'],['hub','b-contract'],['hub','b-weapons'],['hub','b-quantum'],
+  ['b-chrono','c1'],['b-chrono','c2'],['b-chrono','c3'],['b-chrono','c4'],['b-chrono','c5'],
+  ['b-ecra','e1'],['b-ecra','e2'],['b-ecra','e3'],
+  ['b-ich','d1'],['b-ich','d2'],['b-ich','d3'],['b-ich','d4'],['b-ich','d5'],['b-ich','d6'],
+  ['b-contract','a1'],['b-contract','a2'],['b-contract','a3'],['b-contract','a4'],['b-contract','a5'],
+  ['b-weapons','w1'],['b-weapons','w2'],['b-weapons','w3'],['b-weapons','w4'],
+  ['b-quantum','q1'],['b-quantum','q2'],['b-quantum','q3'],
+];
+
+const crossEdges = [
+  { f:'c1', t:'a1', tip:'21 May Suspension → triggers Cl.24/15 no-investigation breach' },
+  { f:'c1', t:'w1', tip:'21 May Suspension → ICH usurped ECRA\'s s178 power' },
+  { f:'c1', t:'w2', tip:'21 May Suspension → ICH breached s51(2) monitoring duty' },
+  { f:'c4', t:'e3', tip:'ECRA Clears (22 Aug) → is the primary vindication shield' },
+  { f:'c4', t:'d1', tip:'ECRA Clears (22 Aug) → directly weakens ICH\'s s2A argument' },
+  { f:'c4', t:'d3', tip:'ECRA Clears (22 Aug) → destroys ICH\'s s165 supervision argument' },
+  { f:'c2', t:'a5', tip:'Resignation (29 May) → supports constructive dismissal argument' },
+  { f:'c3', t:'a4', tip:'Expiry (30 Jun) → accrued rights survive; cause of action not extinguished' },
+];
+
+// ── Geometry ─────────────────────────────────────────────────────────────────
+const nm = {};
+nodes.forEach(n => nm[n.id] = n);
+
+function nc(n) { return { x: n.x + n.w/2, y: n.y + n.h/2 }; }
+
+function exitEntry(fn, tn) {
+  const fc = nc(fn), tc = nc(tn);
+  const dx = tc.x - fc.x, dy = tc.y - fc.y;
+  let p1, p2;
+  if (Math.abs(dx) >= Math.abs(dy)) {
+    if (dx >= 0) { p1={x:fn.x+fn.w,y:fc.y}; p2={x:tn.x,y:tc.y}; }
+    else         { p1={x:fn.x,y:fc.y};       p2={x:tn.x+tn.w,y:tc.y}; }
+  } else {
+    if (dy >= 0) { p1={x:fc.x,y:fn.y+fn.h}; p2={x:tc.x,y:tn.y}; }
+    else         { p1={x:fc.x,y:fn.y};       p2={x:tc.x,y:tn.y+tn.h}; }
+  }
+  return { p1, p2 };
+}
+
+function bezPath(p1, p2) {
+  const dx = Math.abs(p2.x-p1.x), dy = Math.abs(p2.y-p1.y);
+  const mx = (p1.x+p2.x)/2, my = (p1.y+p2.y)/2;
+  if (dx >= dy) return `M${p1.x} ${p1.y} C${mx} ${p1.y} ${mx} ${p2.y} ${p2.x} ${p2.y}`;
+  return `M${p1.x} ${p1.y} C${p1.x} ${my} ${p2.x} ${my} ${p2.x} ${p2.y}`;
+}
+
+// ── State ────────────────────────────────────────────────────────────────────
+const collapsed = {};
+const nodeElems = {};     // id → <g>
+const edgeElems = {};     // "f|t" → <path>
+const branchEdgeMap = {}; // branchId → ['f|t', ...]
+const crossEdgeElems = []; // [{path, f, t}]
+
+// ── Render ───────────────────────────────────────────────────────────────────
+const root = document.getElementById('map-root');
+
+// Tree edges
+treeEdges.forEach(([fid, tid]) => {
+  const fn = nm[fid], tn = nm[tid];
+  if (!fn || !tn) return;
+  const { p1, p2 } = exitEntry(fn, tn);
+  const path = document.createElementNS(NS, 'path');
+  path.setAttribute('d', bezPath(p1, p2));
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke', edgeCol(tn.cat));
+  path.setAttribute('stroke-width', fid === 'hub' ? '2' : '1.5');
+  path.setAttribute('opacity', fid === 'hub' ? '0.55' : '0.38');
+  root.appendChild(path);
+  const key = fid + '|' + tid;
+  edgeElems[key] = path;
+  // Track which branch owns this edge
+  const branchId = tn.parent || (tn.branch ? null : fid);
+  if (branchId && nm[branchId] && nm[branchId].branch) {
+    if (!branchEdgeMap[branchId]) branchEdgeMap[branchId] = [];
+    branchEdgeMap[branchId].push(key);
+  }
+  if (fid.startsWith('b-')) {
+    if (!branchEdgeMap[fid]) branchEdgeMap[fid] = [];
+    branchEdgeMap[fid].push(key);
+  }
+});
+
+// Cross edges
+crossEdges.forEach(ce => {
+  const fn = nm[ce.f], tn = nm[ce.t];
+  if (!fn || !tn) return;
+  const { p1, p2 } = exitEntry(fn, tn);
+  const path = document.createElementNS(NS, 'path');
+  path.setAttribute('d', bezPath(p1, p2));
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke', '#94a3b8');
+  path.setAttribute('stroke-width', '1.2');
+  path.setAttribute('stroke-dasharray', '5,4');
+  path.setAttribute('opacity', '0.28');
+  root.appendChild(path);
+  crossEdgeElems.push({ path, f: ce.f, t: ce.t });
+});
+
+// Nodes
+const tip = document.getElementById('tip');
+
+nodes.forEach(node => {
+  const pal = PAL[node.cat] || PAL['contract'];
+  const isBranch = !!node.branch;
+  const g = document.createElementNS(NS, 'g');
+  g.setAttribute('style', 'cursor:pointer');
+  g.setAttribute('transform', `translate(${node.x},${node.y})`);
+
+  const rect = document.createElementNS(NS, 'rect');
+  rect.setAttribute('width', node.w);
+  rect.setAttribute('height', node.h);
+  rect.setAttribute('rx', node.rx || 6);
+  rect.setAttribute('fill', pal.fill);
+  rect.setAttribute('stroke', pal.stroke);
+  rect.setAttribute('stroke-width', pal.sw || 1.5);
+  if (pal.glow) rect.setAttribute('filter', `url(#${pal.glow})`);
+  rect.style.transition = 'filter 0.15s';
+  g.appendChild(rect);
+
+  // Text
+  const lines = node.lines || [];
+  const fz = node.cat === 'center' ? 14.5 : isBranch ? 11 : 11.5;
+  const lh = fz * 1.42;
+  const totalH = lines.length * lh;
+  const baseY = node.h/2 - totalH/2 + fz * 0.88;
+
+  lines.forEach((line, i) => {
+    const txt = document.createElementNS(NS, 'text');
+    txt.setAttribute('x', node.w/2);
+    txt.setAttribute('y', baseY + i * lh);
+    txt.setAttribute('text-anchor', 'middle');
+    txt.setAttribute('fill', pal.txt);
+    txt.setAttribute('font-size', fz);
+    txt.setAttribute('font-weight', i === 0 ? '600' : '400');
+    txt.setAttribute('font-family', node.cat==='center' ? "'Playfair Display',serif" : "'Source Sans 3',sans-serif");
+    txt.setAttribute('pointer-events', 'none');
+    txt.textContent = line;
+    g.appendChild(txt);
+  });
+
+  // Collapse indicator for branch nodes
+  if (isBranch) {
+    const badge = document.createElementNS(NS, 'text');
+    badge.setAttribute('x', node.w - 8);
+    badge.setAttribute('y', node.h/2 + 4);
+    badge.setAttribute('text-anchor', 'middle');
+    badge.setAttribute('fill', pal.txt);
+    badge.setAttribute('font-size', '12');
+    badge.setAttribute('font-weight', '600');
+    badge.setAttribute('pointer-events', 'none');
+    badge.setAttribute('id', 'badge-' + node.id);
+    badge.textContent = '▾';
+    g.appendChild(badge);
+  }
+
+  // Hover
+  g.addEventListener('mouseenter', (e) => {
+    rect.style.filter = 'brightness(1.35)';
+    if (node.detail) {
+      tip.innerHTML = `<strong>${node.lines.join(' — ')}</strong>${node.detail}`;
+      tip.style.display = 'block';
+    }
+  });
+  g.addEventListener('mousemove', (e) => {
+    let x = e.clientX+15, y = e.clientY-12;
+    if (x+330 > window.innerWidth) x = e.clientX - 334;
+    if (y+200 > window.innerHeight) y = e.clientY - 180;
+    tip.style.left = x+'px'; tip.style.top = y+'px';
+  });
+  g.addEventListener('mouseleave', () => {
+    rect.style.filter = '';
+    tip.style.display = 'none';
+  });
+
+  // Click: collapse/expand branch; show tooltip for leaves
+  g.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (isBranch) {
+      toggleBranch(node.id);
+    }
+  });
+
+  root.appendChild(g);
+  nodeElems[node.id] = g;
+});
+
+// ── Collapse/Expand ──────────────────────────────────────────────────────────
+function toggleBranch(branchId, forceCollapse) {
+  const node = nm[branchId];
+  if (!node || !node.children) return;
+  const isNowCollapsed = forceCollapse !== undefined ? !forceCollapse : !collapsed[branchId];
+  collapsed[branchId] = isNowCollapsed;
+
+  const vis = isNowCollapsed ? 'hidden' : 'visible';
+
+  // Toggle child node groups
+  node.children.forEach(childId => {
+    if (nodeElems[childId]) nodeElems[childId].setAttribute('visibility', vis);
+  });
+
+  // Toggle branch→leaf edges
+  (branchEdgeMap[branchId] || []).forEach(key => {
+    if (edgeElems[key]) edgeElems[key].setAttribute('visibility', vis);
+  });
+
+  // Toggle cross edges where source or target is a child of this branch
+  crossEdgeElems.forEach(({ path, f, t }) => {
+    const fNode = nm[f], tNode = nm[t];
+    const fHidden = fNode && fNode.parent && collapsed[fNode.parent];
+    const tHidden = tNode && tNode.parent && collapsed[tNode.parent];
+    path.setAttribute('visibility', (fHidden || tHidden) ? 'hidden' : 'visible');
+  });
+
+  // Update badge
+  const badge = document.getElementById('badge-' + branchId);
+  if (badge) badge.textContent = isNowCollapsed ? '▸' : '▾';
+}
+
+// Collapse all / Expand all
+let allCollapsed = false;
+document.getElementById('btn-collapse-all').addEventListener('click', () => {
+  allCollapsed = !allCollapsed;
+  nodes.filter(n => n.branch).forEach(n => toggleBranch(n.id, !allCollapsed));
+  document.getElementById('btn-collapse-all').textContent = allCollapsed ? 'Expand All' : 'Collapse All';
+});
+
+// ── Zoom / Pan ───────────────────────────────────────────────────────────────
+let scale = 0.72, tx = -200, ty = -60;
+let dragging = false, dragStart = {x:0,y:0}, panStart = {tx:0,ty:0};
+
+const canvas = document.getElementById('canvas');
+const zoomLabel = document.getElementById('zoom-label');
+
+function applyTransform() {
+  root.setAttribute('transform', `translate(${tx},${ty}) scale(${scale})`);
+  zoomLabel.textContent = Math.round(scale*100) + '%';
+}
+
+function zoomTo(newScale, cx, cy) {
+  const clamp = Math.max(0.2, Math.min(3, newScale));
+  tx = cx - (cx - tx) * (clamp / scale);
+  ty = cy - (cy - ty) * (clamp / scale);
+  scale = clamp;
+  applyTransform();
+}
+
+// Initial fit
+applyTransform();
+
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  zoomTo(scale * (e.deltaY > 0 ? 0.88 : 1.14), e.clientX - rect.left, e.clientY - rect.top);
+}, { passive: false });
+
+canvas.addEventListener('mousedown', (e) => {
+  if (e.button !== 0) return;
+  dragging = true;
+  dragStart = { x: e.clientX, y: e.clientY };
+  panStart = { tx, ty };
+  canvas.classList.add('dragging');
+});
+window.addEventListener('mousemove', (e) => {
+  if (!dragging) return;
+  tx = panStart.tx + (e.clientX - dragStart.x);
+  ty = panStart.ty + (e.clientY - dragStart.y);
+  applyTransform();
+});
+window.addEventListener('mouseup', () => {
+  dragging = false;
+  canvas.classList.remove('dragging');
+});
+
+// Touch pan/zoom
+let lastTouches = null;
+canvas.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  lastTouches = e.touches;
+  if (e.touches.length === 1) {
+    dragging = true;
+    dragStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    panStart = { tx, ty };
+  }
+}, { passive: false });
+canvas.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  if (e.touches.length === 2) {
+    const d0 = Math.hypot(lastTouches[0].clientX-lastTouches[1].clientX, lastTouches[0].clientY-lastTouches[1].clientY);
+    const d1 = Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+    const rect = canvas.getBoundingClientRect();
+    const cx = (e.touches[0].clientX + e.touches[1].clientX)/2 - rect.left;
+    const cy = (e.touches[0].clientY + e.touches[1].clientY)/2 - rect.top;
+    zoomTo(scale * (d1/d0), cx, cy);
+    lastTouches = e.touches;
+  } else if (e.touches.length === 1 && dragging) {
+    tx = panStart.tx + (e.touches[0].clientX - dragStart.x);
+    ty = panStart.ty + (e.touches[0].clientY - dragStart.y);
+    applyTransform();
+  }
+}, { passive: false });
+canvas.addEventListener('touchend', () => { dragging = false; });
+
+// Toolbar buttons
+document.getElementById('btn-zin').addEventListener('click', () => {
+  const r = canvas.getBoundingClientRect();
+  zoomTo(scale * 1.25, r.width/2, r.height/2);
+});
+document.getElementById('btn-zout').addEventListener('click', () => {
+  const r = canvas.getBoundingClientRect();
+  zoomTo(scale * 0.8, r.width/2, r.height/2);
+});
+document.getElementById('btn-reset').addEventListener('click', () => {
+  scale = 0.72; tx = -200; ty = -60;
+  applyTransform();
+});
+</script>
+</body>
+</html>
